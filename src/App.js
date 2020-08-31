@@ -1,10 +1,14 @@
 import React from 'react';
 import { VictoryChart,VictoryArea,VictoryTheme } from "victory";
+import { Button } from '@material-ui/core';
+import ApiCalendar from 'react-google-calendar-api';
 import './App.css';
 
 function App() {
   return (
     <div>
+    <Button color="primary" onClick={()=>ApiCalendar.handleAuthClick()}>Sign in</Button>
+    <Button color="primary" onClick={()=>ApiCalendar.handleSignoutClick()}>Sign out</Button>
     <VictoryChart
     theme={VictoryTheme.material}
     >
