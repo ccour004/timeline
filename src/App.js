@@ -4,6 +4,7 @@ import './App.css';
 
 function App() {
   return (
+    <div>
     <VictoryChart
     theme={VictoryTheme.material}
     >
@@ -18,6 +19,7 @@ function App() {
         ]}
       />
     </VictoryChart>
+    </div>
   );
 }
 
