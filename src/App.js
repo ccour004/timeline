@@ -1,7 +1,6 @@
 import React from 'react';
 import ChartistGraph from 'react-chartist';
-import { Button } from '@material-ui/core';
-import ApiCalendar from 'react-google-calendar-api';
+import { GoogleLogout,GoogleLogin } from 'react-google-login';
 import './App.css';
 
 class Bar extends React.Component {
@@ -38,19 +37,23 @@ class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {isSigned:false};
-    ApiCalendar.onLoad(() => {
-      console.log("Calendar API loaded...")
-      ApiCalendar.listenSign((isSigned)=>{console.log("LISTEN SIGNED! "+isSigned);this.setState({isSigned})});
-    });
+
   }
 
   render(){
-    return this.state.isSigned ? 
-      <div>
-      <Button color="primary" onClick={()=>ApiCalendar.handleSignoutClick()}>Sign out</Button>
-      <Bar/> 
-      </div>
-    : <Button color="primary" onClick={()=>ApiCalendar.handleAuthClick()}>Sign in</Button>
+    return this.state.isSigned?<div><GoogleLogout
+    clientId={process.env.REACT_APP_CLIENT_ID}
+    buttonText="Logout"
+    onLogoutSuccess={()=>this.setState({isSigned:false})}/>
+    <Bar/>
+    </div>
+    :<GoogleLogin
+    clientId={process.env.REACT_APP_CLIENT_ID}
+    buttonText="Login"
+    onSuccess={()=>this.setState({isSigned:true})}
+    onFailure={()=>alert("Login failed!")}
+    cookiePolicy={'single_host_origin'}
+  />
   }
 }
 
