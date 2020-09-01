@@ -2,7 +2,6 @@ import React from 'react';
 import ChartistGraph from 'react-chartist';
 import { GoogleLogout,GoogleLogin } from 'react-google-login';
 import './App.css';
-import { Button } from '@material-ui/core';
 
 class Bar extends React.Component {
   render() {
@@ -50,25 +49,20 @@ class App extends React.Component{
     return this.state.isSigned?<div><GoogleLogout
       clientId={process.env.REACT_APP_CLIENT_ID}
       buttonText="Logout"
-      onLogoutSuccess={()=>this.setState({isSigned:false,access_token:''})}/>
-    <Button onClick={()=>this.apiCall(this.state.CALENDAR_LIST,"",(response)=>{console.log(JSON.stringify(response))})}>Calendar List</Button>
-    <Button onClick={()=>this.apiCall('calendars/primary/events','timeMin=2020-02-02T10:00:00-07:00',(response)=>{
-      this.setState({items:response.items})
-      response.items.forEach((event)=>{
-        console.log("SUMMARY: "+event.summary+",START: "+(event.start?(event.start.date?event.start.date:event.start.dateTime):""))
-      })
-      })}>Event List</Button>
+      onLogoutSuccess={()=>this.setState({isSigned:false,access_token:''},clearInterval(this.state.interval))}/>
     <Bar/>
     {this.state.items.map((event)=>{
       if(event.summary === undefined) return (null)
-      return <div>SUMMARY: {event.summary},START: {(event.start?(event.start.date?event.start.date:event.start.dateTime):"")}</div>
+      return <div key={event.summary+"_"+Math.random()}>SUMMARY: {event.summary},START: {(event.start?(event.start.date?event.start.date:event.start.dateTime):"")}</div>
     })}
     </div>
     :<GoogleLogin
       clientId={process.env.REACT_APP_CLIENT_ID}
       buttonText="Login"
       scope="https://www.googleapis.com/auth/calendar"
-      onSuccess={(response)=>{this.setState({access_token:response.wc.access_token,isSigned:true})}}
+      onSuccess={(response)=>{this.setState({access_token:response.wc.access_token,isSigned:true,interval:setInterval(()=>this.apiCall('calendars/primary/events','timeMin=2020-02-02T10:00:00-07:00',(response)=>{
+        this.setState({items:response.items !== undefined?response.items:[]},console.log("Calendar updated!"))
+        }),10000)})}}
       onFailure={()=>alert("Login failed!")}
       cookiePolicy={'single_host_origin'}
   />
