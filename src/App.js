@@ -2,11 +2,13 @@ import React from 'react';
 import ChartistGraph from 'react-chartist';
 import { GoogleLogout,GoogleLogin } from 'react-google-login';
 import './App.css';
+import chartistPluginThreshold from 'chartist-plugin-threshold';
 
 class Bar extends React.Component {
   constructor(props){
     super(props);
     this.state={low:-10,high:10}
+    console.log(chartistPluginThreshold)
   }
   render() {
  
@@ -22,7 +24,12 @@ class Bar extends React.Component {
         labelInterpolationFnc: function(value, index) {
           return index % 2 === 0 ? value : null;
         }
-      }
+      },
+      plugins: [
+        chartistPluginThreshold({
+          threshold: 4
+        })
+      ]
     };
  
     var type = 'Line'
