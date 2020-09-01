@@ -4,18 +4,20 @@ import { GoogleLogout,GoogleLogin } from 'react-google-login';
 import './App.css';
 
 class Bar extends React.Component {
+  constructor(props){
+    super(props);
+    this.state={low:-10,high:10}
+  }
   render() {
  
     var data = {
-      labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10'],
-      series: [
-        [1, 2, 4, 8, 6, -2, -1, -4, -6, -2]
-      ]
+      labels: this.props.items.map((item)=>{return item.summary}),
+      series: [this.props.items.map(()=>{let myNum = Math.random() * 100 - 50; if(myNum < this.state.low) this.setState({low:myNum}); if(myNum > this.state.high) this.setState({high:myNum}); return myNum})]
     };
  
     var options = {
-      high: 10,
-      low: -10,
+      high: this.state.high,
+      low: this.state.low,
       axisX: {
         labelInterpolationFnc: function(value, index) {
           return index % 2 === 0 ? value : null;
@@ -50,7 +52,7 @@ class App extends React.Component{
       clientId={process.env.REACT_APP_CLIENT_ID}
       buttonText="Logout"
       onLogoutSuccess={()=>this.setState({isSigned:false,access_token:''},clearInterval(this.state.interval))}/>
-    <Bar/>
+    <Bar items={this.state.items}/>
     {this.state.items.map((event)=>{
       if(event.summary === undefined) return (null)
       return <div key={event.summary+"_"+Math.random()}>SUMMARY: {event.summary},START: {(event.start?(event.start.date?event.start.date:event.start.dateTime):"")}</div>
